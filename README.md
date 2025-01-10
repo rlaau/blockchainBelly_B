@@ -1,11 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 하실 일
+### 1) 이 레포지토리를 git fork, clone
+1.자신의 원격 레포지토리에 이 레포지토리를 원본 레포지토리로 삼아 fork해 주세요.
+2. 이후 자신의 레포지토리를 자신의 로컬 머신에 git clone해 주세요.
+3. 로컬에 필요한 페키지를 설치해 주세요
+### 2) 설치 이후
+1. 환경 설정을 마친 후, 핵심 기능을 위주로 개발해 주세요 (카카오톡 참고)
+2. 기능이나 페이지 완성 때마다 git push후 pr을 신청해 주세요. 그래야 충돌이 덜 일어납니다.
 
-## Getting Started
-
-First, run the development server:
+## 로컬 설치 시 (git clone이후 )
 
 ```bash
-npm run dev
+npm run dev    <- 얘가 젤 편할 겁니다
 # or
 yarn dev
 # or
@@ -13,24 +18,18 @@ pnpm dev
 # or
 bun dev
 ```
+### 웬만해선 공식문서 보고 설치하는게 좋습니다!
+git clone하신 후, nextjs설치 창세서 전부 yes누르시면 nextjs, tailwind는
+그러고 나서 shadcn ui의 installation에서 인스톨 하심 됩니다. 프론트 분들은 환경 설정은 끝입니다.
+이후 프론트엔드 꾸미시면 됩니다. 간단한 예제를 코드로 써 놨으니, 그거 보고 감 잡으셔도 좋겠네요.
+tailwind와 shadcn을 잘 쓰시면 개발 시간을 아주 많이 줄일 수 있습니다!
+현준님은 알아서 몽고디비 설치하시고 api 핵심 기능따라 개발하시면 됩니다.
+### 개발 완료하신 후엔 꾸준히 git push 부탁드립니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 스펙
+1. nextjs
+2. 테일윈드
+3. shadcn
+4. mongodb
+5. 여타 ai툴
+을 쓰지 않을까 합니다.
