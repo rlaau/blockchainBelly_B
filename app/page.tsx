@@ -24,6 +24,17 @@ export default function Home() {
     <div  className="items-center justify-center mt-8 text-xl font-bold text-center text-yellow-400">
         {displayName && <p>화이팅!: <strong>{displayName}</strong></p>}
       </div>
+      <main className="p-4 text-center">
+      <h1 className="text-3xl font-bold mb-4">Welcome to My Coin App</h1>
+      <p className="mb-4">Create and view coins easily.</p>
+      <a href="/createCoin" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Create Coin
+      </a>
+      <span className="mx-2">or</span>
+      <a href="/getCoins" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        View Coins
+      </a>
+    </main>
     </div>
   );
 }
