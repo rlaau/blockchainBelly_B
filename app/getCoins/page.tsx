@@ -27,7 +27,7 @@ export default function GetCoinsPage() {
     <main className="max-w-3xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Coin List</h1>
       <a
-        href="/createCoins"
+        href="/createCoin"
         className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4"
       >
         Create New Coin

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 export default function CreateCoinsPage() {
   const router = useRouter();
+  let loading=false
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -11,6 +12,11 @@ export default function CreateCoinsPage() {
   const [file, setFile] = useState<File | null>(null);
 
   async function handleSubmit(e: FormEvent) {
+    if (loading) {
+      return
+    } else {
+      loading=true
+    }
     e.preventDefault();
 
     if (!file) {
@@ -39,7 +45,8 @@ export default function CreateCoinsPage() {
       }
     } catch (error) {
       console.error('Error creating coin:', error);
-    }
+      loading=false
+    } 
   }
 
   return (

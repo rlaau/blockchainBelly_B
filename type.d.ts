@@ -7,6 +7,18 @@ declare global{
         content: string;
         createdAt: Date; // Date 문자열
       }
+      interface CoinNews {
+        _id?: ObjectId;
+        coinName: string;
+        title: string;
+        description: string;
+        field: string;
+        majorPeople: string[]; // array
+        region: string;
+        eventClassification: string;
+        imgUrl?: string;
+        createdAt: Date;
+      }
       
 }
 export {};
