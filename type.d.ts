@@ -1,23 +1,25 @@
 import { ObjectId } from 'mongodb';
 declare global{
-    interface Coin {
+  type TimerResponse = {
+    remainingTime: string;
+    totalTime: string;
+  };
+  
+      interface Coin {
         _id?: ObjectId;
-        title: string;
-        imgUrl: string;
-        content: string;
-        createdAt: Date; // Date 문자열
-      }
-      interface CoinNews {
-        _id?: ObjectId;
+        price?:number;
+        keyWord: string;
+        viewCount:number;
         coinName: string;
         title: string;
         description: string;
-        field: string;
+        field: "Economy" | "Society" | "Culture/Artistry" | "The international/World" | "Science/Technology" | "Sports" | "Entertainment" | "Health/Medical care" | "Environment" | "Education" | "Accident";
         majorPeople: string[]; // array
         region: string;
-        eventClassification: string;
+        eventClassification: "Breaking News" | "Announcement" | "Accident" | "Scandal" | "Natural Disaster" | "Political Development" | "Economic Update" | "Sports Update" | "Cultural Event" | "Technological Advance" | "Health Alert" | "Educational News" | "Environmental Update" | "International Relations" | "Human Interest Story" | "Opinion Piece" | "Editorial" | "Analysis" | "Prediction" | "Celebration" | "Award" | "Conference" | "Research Finding" | "Crime" | "Trial/Court Case" | "Entertainment Update" | "Product Launch" | "Scientific Discovery" | "Travel Advisory" | "Weather Report" | "Policy Change" | "Protest" | "Elections" | "Obituary" | "Reunion" | "Award Nomination" | "Fraud" | "Cybersecurity Incident" | "Space Exploration" | "Charity Event";
         imgUrl?: string;
         createdAt: Date;
+        
       }
       
 }

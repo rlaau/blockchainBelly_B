@@ -6,23 +6,36 @@ import Parser from "rss-parser";
 // GET 라우트
 export async function GET() {
     try {
-      const coinNewsText = await getCoinNewsText();
-      if (!coinNewsText) {
+      const coinText = await getCoinNewsText();
+      if (!coinText) {
         return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });
       }
   
-      const insertedCoinNews = await insertCoinNewsImageUrl(coinNewsText);
-      if (!insertedCoinNews) {
+      const insertedCoinImage = await insertCoinImageUrl(coinText);
+      if (!insertedCoinImage) {
         return NextResponse.json({ error: "Failed to generate image or save data" }, { status: 500 });
       }
   
-      return NextResponse.json(insertedCoinNews);
+      return NextResponse.json(insertedCoinImage);
     } catch (err) {
-      console.error("Error in GET /api/coinNews:", err);
+      console.error("Error in GET /api/createAiCoin:", err);
       return NextResponse.json({ error: "Unexpected server error" }, { status: 500 });
     }
   }
-async function getCoinNewsText(): Promise<CoinNews | null> {
+
+export async function CreateCoin() : Promise<boolean> {
+  const coinText = await getCoinNewsText();
+  if (!coinText) {
+    return false
+  }
+  const insertedCoinImage = await insertCoinImageUrl(coinText);
+  if (!insertedCoinImage) {
+    return false
+  }
+  return true
+  
+}
+async function getCoinNewsText(): Promise<Coin | null> {
     try {
         // 1) Google 뉴스 "RSS" 주소 (영문 버전 예시)
         const rssUrl = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en";
@@ -49,11 +62,12 @@ async function getCoinNewsText(): Promise<CoinNews | null> {
     
     Please select one article following these guidelines:
     1. Choose the most attention-grabbing or impactful news story.
-    2. Avoid news that contains highly personal or sensitive content, or news that could create issues if used as the basis for a product.
+    2. Avoid news that contains highly personal or sensitive content(like crime, trial/court case, a serious and cruel accident ...etc), or news that could create issues if used as the basis for a product.
     
     {
       "coinName": string,
       "title": string,
+      "keyWord":string,
       "description": string,
       "field": "Economy" | "Society" | "Culture/Artistry" | "The international/World" | "Science/Technology" | "Sports" | "Entertainment" | "Health/Medical care" | "Environment" | "Education" | "Accident",
       "majorPeople": array,
@@ -100,6 +114,10 @@ async function getCoinNewsText(): Promise<CoinNews | null> {
                   title: {
                     type: "string",
                     description: "The news title",
+                  },
+                  keyWord: {
+                    type: "string",
+                    description: "extract the key word. The subject of the news, the institution, or the object of the event, the subject, or the subject. ",
                   },
                   description: {
                     type: "string",
@@ -184,6 +202,7 @@ async function getCoinNewsText(): Promise<CoinNews | null> {
                 },
                 required: [
                   "coinName",
+                  "keyWord",
                   "title",
                   "description",
                   "field",
@@ -212,20 +231,22 @@ async function getCoinNewsText(): Promise<CoinNews | null> {
     const result = parsedData.result ? JSON.parse(parsedData.result) : parsedData;
 
     // CoinNews 데이터 가공
-    const coinNews: CoinNews = {
+    const coin: Coin = {
       coinName: result.coinName,
       title: result.title,
+      keyWord:result.keyWord,
       description: result.description,
       field: result.field,
       majorPeople: result.majorPeople || [],
       region: result.region,
       eventClassification: result.eventClassification,
       createdAt: new Date(), // 현재 시간
+      viewCount:0,
     };
 
-    return coinNews;
+    return coin;
       } catch (err) {
-        console.error("Error in getNewsInfo:", err);
+        console.error("Error in getCoinNewsText:", err);
         return null;
       }
 }
@@ -238,11 +259,34 @@ const s3Client = new S3Client({
     },
   });
   
-async function insertCoinNewsImageUrl(cn:CoinNews):Promise<CoinNews|null>{
+async function insertCoinImageUrl(cn:Coin):Promise<Coin|null>{
 try {
+  if (process.env.NODE_ENV === "development") {
+    console.log("Mocking OpenAI API response.");
+    const imgUrl= "https://unsplash.com/ko/%EC%82%AC%EC%A7%84/%EC%95%BD%EA%B0%84%EC%9D%98-%EB%AC%BC%EC%9D%B4-%EC%9E%88%EB%8A%94-%EC%88%98%EC%97%AD-HO2OGsZ1P6U"
+    const client = await connectDB;
+    const db = client.db("postings");
+
+    const newCoin: Coin = {
+      ...cn,
+      imgUrl, // 이미지 URL 추가
+      createdAt: new Date(),
+    };
+
+    const result = await db.collection<Coin>("coins").insertOne(newCoin);
+  // 2) _id 필드 추가하여 CoinNews 타입 데이터 생성
+  const savedNews: Coin = {
+    ...newCoin,
+    _id: result.insertedId, // MongoDB에서 생성된 _id 추가
+  };
+    // 9) 최종 응답
+    return savedNews
+  }
+
+
     const { coinName, title } = cn;
     if (!coinName || !title) {
-      throw new Error("coinName and title are required in CoinNews data");
+      throw new Error("coinName and title are required in Coin data");
     }
     const prompt = `Create a digital art image representing and contaion word "${coinName}", and it maybe attention-grabbing image.`;
 
@@ -286,16 +330,16 @@ try {
     const client = await connectDB;
     const db = client.db("postings");
 
-    const newNews: CoinNews = {
+    const newCoin: Coin = {
       ...cn,
       imgUrl, // 이미지 URL 추가
       createdAt: new Date(),
     };
 
-    const result = await db.collection<CoinNews>("coinNews").insertOne(newNews);
+    const result = await db.collection<Coin>("coins").insertOne(newCoin);
   // 2) _id 필드 추가하여 CoinNews 타입 데이터 생성
-  const savedNews: CoinNews = {
-    ...newNews,
+  const savedNews: Coin = {
+    ...newCoin,
     _id: result.insertedId, // MongoDB에서 생성된 _id 추가
   };
     // 9) 최종 응답

@@ -1,40 +1,62 @@
-'use client'
-import { useState } from 'react';
-import {CoolInput, CoolButton} from "@/app/coolComponents"
+"use client";
 
-export default function Home() {
-  const [name, setName] = useState(''); // 입력된 이름 상태
-  const [displayName, setDisplayName] = useState(''); // 화면에 표시될 이름 상태
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { CoinExternal } from "@/components/custom/coinExtenal";
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value); // 입력값 상태 업데이트
+// Timer 컴포넌트를 동적으로 가져옴 (SSR 비활성화)
+const Timer = dynamic(() => import("@/components/custom/timer").then((mod) => mod.Timer), {
+  ssr: false,
+});
+
+
+export default function GetCoinsPage() {
+  const [coins, setCoins] = useState<Coin[]>([]);
+  const [isWaiting, setIsWaiting] = useState(false);
+
+  // (1) Timer 컴포넌트가 전달하는 waiting 상태를 받는 콜백
+  const handleWaitingStatusChange = (waiting: boolean) => {
+    setIsWaiting(waiting);
   };
 
-  const handleButtonClick = () => {
-    setDisplayName(name); // 화면에 표시될 이름 업데이트
+  // (2) 코인 목록 가져오기 함수
+  const fetchCoins = async () => {
+    try {
+      const res = await fetch("/api/coins", { cache: "no-store" });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setCoins(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch coins:", error);
+    }
   };
+
+  // (3) 처음 마운트 시 한 번 불러오고, 'isWaiting' 상태가 바뀔 때마다 다시 가져옴
+  useEffect(() => {
+    fetchCoins();
+  }, [isWaiting]);
 
   return (
-    <div className="bg-slate-800 grid-rows-[20px_1fr_20px] items-center justify-between min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-    <div className="grid lg:gap-2  grid-cols-1 xl:grid-cols-2 gap-y-4 ">
-      
-    <CoolInput   value={name}   onChange={handleInputChange}/>
-    <CoolButton onClick={handleButtonClick}/>
-    </div>
-    <div  className="items-center justify-center mt-8 text-xl font-bold text-center text-yellow-400">
-        {displayName && <p>화이팅!: <strong>{displayName}</strong></p>}
+    <main className="max-w-3xl mx-auto p-4">
+      <div>
+        {/* Timer 컴포넌트에서 waiting 상태 변화를 감지해 handleWaitingStatusChange에 전달 */}
+        <Timer onWaitingStatusChange={handleWaitingStatusChange} />
       </div>
-      <main className="p-4 text-center">
-      <h1 className="text-3xl font-bold mb-4">Welcome to My Coin App</h1>
-      <p className="mb-4">Create and view coins easily.</p>
-      <a href="/createCoin" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Create Coin
+
+      <h1 className="text-2xl font-bold mb-4">Coin List</h1>
+      <a
+        href="/api/createAiCoin"
+        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4"
+      >
+        Create New Coin
       </a>
-      <span className="mx-2">or</span>
-      <a href="/getCoins" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        View Coins
-      </a>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {coins.map((coin) => (
+          <CoinExternal key={String(coin._id) || "fallback"} coin={coin} />
+        ))}
+      </div>
     </main>
-    </div>
   );
 }
