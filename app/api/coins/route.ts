@@ -1,21 +1,32 @@
-// app/api/coins/route.ts
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/database';
 
-
-
-// GET: 코인 목록 조회
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const url = new URL(req.url);
+    const sort = url.searchParams.get("sort") || "time";
+    const page = parseInt(url.searchParams.get("page") || "0", 10);
+    const limit = parseInt(url.searchParams.get("limit") || "12", 10);
+
     const client = await connectDB;
-    const db = client.db('postings');
-    const coins = await db.collection<Coin>('coins')
-                          .find({})
-                          .sort({ createdAt: -1 })
-                          .toArray();
+    const db = client.db("postings");
+
+    const sortField =
+      sort === "popularity" ? "viewCount" :
+      sort === "price" ? "price" : 
+      "createdAt";
+
+    const coins = await db
+      .collection("coins")
+      .find()
+      .sort({ [sortField]: -1 }) // 정렬
+      .skip(page * limit)
+      .limit(limit)
+      .toArray();
+
     return NextResponse.json(coins);
   } catch (error) {
-    console.error('Error fetching coins:', error);
-    return NextResponse.json({ error: 'Failed to fetch coins' }, { status: 500 });
+    console.error("Failed to fetch coins:", error);
+    return NextResponse.json({ error: "Failed to fetch coins" }, { status: 500 });
   }
 }

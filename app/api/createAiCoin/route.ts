@@ -242,6 +242,7 @@ async function getCoinNewsText(): Promise<Coin | null> {
       eventClassification: result.eventClassification,
       createdAt: new Date(), // 현재 시간
       viewCount:0,
+      price:0,
     };
 
     return coin;
@@ -263,7 +264,7 @@ async function insertCoinImageUrl(cn:Coin):Promise<Coin|null>{
 try {
   if (process.env.NODE_ENV === "development") {
     console.log("Mocking OpenAI API response.");
-    const imgUrl= "https://unsplash.com/ko/%EC%82%AC%EC%A7%84/%EC%95%BD%EA%B0%84%EC%9D%98-%EB%AC%BC%EC%9D%B4-%EC%9E%88%EB%8A%94-%EC%88%98%EC%97%AD-HO2OGsZ1P6U"
+    const imgUrl= "https://trendpump.s3.ap-northeast-2.amazonaws.com/dalle-coin-1737317332637.png"
     const client = await connectDB;
     const db = client.db("postings");
 

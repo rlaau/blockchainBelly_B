@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { MainNav } from "@/components/custom/mainNav";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,7 +29,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+      <header className="fixed w-full px-2 m-0 sm:px-8 lg:px-16 xl:px-24 bg-background z-20 border-b border-border">
+        <MainNav where="home" />
+      </header>
+      <main className="w-full flex flex-col p-4">
         {children}
+      </main>
+      <footer className="flex justify-center pb-4 text-xl">
+        © 2025 Trend.pump
+     </footer>
       </body>
     </html>
   );
