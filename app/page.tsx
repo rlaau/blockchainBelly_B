@@ -110,13 +110,8 @@ export default function GetCoinsPage() {
         <Timer onWaitingStatusChange={handleWaitingStatusChange} />
       </div>
 
-      <h1 className="text-2xl font-bold mb-4">Coin History</h1>
-      <a
-        href="/api/createAiCoin"
-        className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4"
-      >
-        Create New Coin
-      </a>
+      <h1 className="text-3xl py-4 font-bold mb-4">Generated Coins
+</h1>
 
       {/* 코인 목록 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

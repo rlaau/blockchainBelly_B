@@ -13,14 +13,16 @@ export async function FetchSimilarCoins(coin: Coin, field: keyof Coin, num: numb
       const baseUrl =
         typeof window !== "undefined"
           ? `${window.location.origin}`
-          : "http://localhost:3000"; // 서버 환경에서는 기본 URL 사용
+          : process.env.BASE_URL // 서버 환경에서는 기본 URL 사용
   
       const url = `${baseUrl}/api/coins/similar?${queryParams.toString()}`;
   
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
-  
-      const data: Coin[] = await res.json();
+      
+      let data: Coin[] = await res.json();
+      data = data.filter((c) => c._id?.toString() !== coin._id?.toString());
+
       return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error("Failed to fetch similar coins:", error);

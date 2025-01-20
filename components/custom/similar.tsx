@@ -17,7 +17,16 @@ export function SimiliarXXX({ coin, targetField, num }: { coin: Coin, targetFiel
     return (
       <ul className="pt-2 flex flex-col gap-y-1 text-balance">
         {sameXXX?.map((c, idx) => (
-          <Link href={`/getCoins/${c._id}`} key={c._id?.toString()}>{idx+1}. {c.coinName}</Link>
+              <Link
+              href={`/getCoins/${c._id}`}
+              key={c._id?.toString()}
+              className="group flex items-center gap-x-1 transition ease-in-out duration-200"
+            >
+              <span className="group-hover:hidden ">{idx + 1}.</span>
+              <span className="hidden group-hover:inline text-pink-600 transition-opacity ease-in-out duration-200">{"->"}</span>
+              <span>{c.coinName}</span>
+              <span className="ml-1">{c.price ? `${c.price}$` : "nn$"}</span>
+            </Link>
         ))}
       </ul>
     );

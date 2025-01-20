@@ -108,7 +108,7 @@ export default async function Page({ params}: { params: { id: string }; }){
         <p className="font-medium"><span className="text-green-500">{coin.field || "Unknown Field"} </span></p>
       </div>
               <Suspense fallback={<p>loading</p>}>
- <SimiliarXXX coin={coin} targetField={"majorPeople"} num={10}/>
+ <SimiliarXXX coin={coin} targetField={"field"} num={10}/>
               </Suspense>
               </div>
 
