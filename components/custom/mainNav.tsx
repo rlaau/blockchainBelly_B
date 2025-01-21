@@ -1,7 +1,13 @@
+"use client";
+
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-async function MainNav({ where = 'home' }: { where?: string }) {
+function MainNav() {
+  const pathname = usePathname(); // 현재 URL 경로를 가져옴
+  const isAnalyzePage = pathname.includes('analyze'); // 'analyze' 포함 여부 판단
+
   return (
     <nav className="w-full flex pt-4 pb-3 justify-between bg-background">
       <div className="flex basis-1/2 justify-start gap-x-5">
@@ -11,34 +17,24 @@ async function MainNav({ where = 'home' }: { where?: string }) {
         >
           Trend.pump
         </Link>
-        {where === 'home' ? (
-          <div className="flex ml-6 gap-x-2 lg:gap-x-5 ">
-            <Link href={'/'} className="text-md lg:text-lg font-medium border-b-2 px-2 border-pink-600 ">
-              History
-            </Link>
-            <Link
-              href={'/community'}
-              className="text-md lg:text-lg px-2 font-medium text-muted-foreground"
-            >
-              Trends
-            </Link>
-          </div>
-        ) : (
-          <div className="flex ml-6  gap-x-2 lg:gap-x-5">
-            <Link
-              href={'/'}
-              className="text-md lg:text-lg px-2 font-medium text-muted-foreground "
-            >
-              History
-            </Link>
-            <Link
-              href={'/community'}
-              className="text-md lg:text-lg font-medium px-2 text-medium border-b-2  border-pink-600"
-            >
-               Trends
-            </Link>
-          </div>
-        )}
+        <div className="flex ml-6 gap-x-2 lg:gap-x-5">
+          <Link
+            href={'/'}
+            className={`text-md lg:text-lg px-2 font-medium ${
+              !isAnalyzePage ? 'border-b-2 border-pink-600' : 'text-muted-foreground'
+            }`}
+          >
+            History
+          </Link>
+          <Link
+            href={'/analyze'}
+            className={`text-md lg:text-lg px-2 font-medium ${
+              isAnalyzePage ? 'border-b-2 border-pink-600' : 'text-muted-foreground'
+            }`}
+          >
+            Trends
+          </Link>
+        </div>
       </div>
       <div className="flex basis-1/2 justify-end md:gap-x-8 gap-x-3 items-center">
         <Input
@@ -60,9 +56,9 @@ async function MainNav({ where = 'home' }: { where?: string }) {
             clipRule="evenodd"
           ></path>
         </svg>
-
       </div>
     </nav>
   );
 }
+
 export { MainNav };

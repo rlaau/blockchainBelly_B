@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
       <header className="fixed w-full px-2 m-0 sm:px-8 lg:px-16 xl:px-24 bg-background z-20 border-b border-border">
-        <MainNav where="home" />
+        <MainNav />
       </header>
       <main className="w-full flex flex-col p-4">
         {children}

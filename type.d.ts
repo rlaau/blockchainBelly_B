@@ -4,6 +4,12 @@ declare global{
     remainingTime: string;
     totalTime: string;
   };
+  type SortedResult = Record<string, [string, [number, number]][]>;
+  type BarChartProps = {
+    kind: string;
+    data: { label: string; value: number }[];
+    maxValue: number; // 세로축의 최대값
+  };
   
       interface Coin {
         _id?: ObjectId;

@@ -264,7 +264,7 @@ async function insertCoinImageUrl(cn:Coin):Promise<Coin|null>{
 try {
   if (process.env.NODE_ENV === "development") {
     console.log("Mocking OpenAI API response.");
-    const imgUrl= "https://trendpump.s3.ap-northeast-2.amazonaws.com/dalle-coin-1737317332637.png"
+    const imgUrl= "https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=2166&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     const client = await connectDB;
     const db = client.db("postings");
 

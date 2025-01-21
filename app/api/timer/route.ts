@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { CreateCoin } from '../createAiCoin/route';
 
 // 0.01시간 = 360초 (테스트용)
-const TIMER_INTERVAL_HOURS = 1;
+const TIMER_INTERVAL_HOURS = 6;
 const TIMER_INTERVAL_MS = TIMER_INTERVAL_HOURS * 60 * 60 * 1000;
 
 // 남은 시간 계산용
