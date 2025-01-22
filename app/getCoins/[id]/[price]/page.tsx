@@ -1,14 +1,23 @@
+
 import { connectDB } from '@/database';
 import { ObjectId } from 'mongodb';
 import { Suspense } from "react";
 import  Image  from 'next/image';
 import { SimiliarXXX } from '@/components/custom/similar';
-
+import CommentSection from './commentSection';
 import { FaTag, FaGlobe, FaUser, FaMapMarkerAlt, FaBookmark, FaClock  } from "react-icons/fa";
-export default async function Page({ params}: { params: { id: string }; }){
-    const waitedParams = await Promise.resolve(params); 
-    const id =waitedParams.id
 
+
+
+export default async function Page({ params }: { params: { id: string; price: string } }){
+  const awaitedParams = await Promise.resolve(params); 
+  const id = awaitedParams.id;
+  const rawPrice=awaitedParams.price
+
+  const price = decodeURIComponent(rawPrice);
+  if (!id) {
+      throw new Error('ID not provided in params');
+  }
     if (!id) {
       throw new Error('ID not provided in params');
     }
@@ -66,8 +75,10 @@ export default async function Page({ params}: { params: { id: string }; }){
                 <p className='text-md mt-4'>: {coin.description}</p>
               </div>
               <div className="pt-8">
-                <p>nn개의 댓글</p>
-                <p>댓글 로드하기기</p>
+              <Suspense fallback={<p>Loading comments...</p>}>
+                <CommentSection coinId={id} />
+            </Suspense>
+            
               </div>
             </div>
           </div>

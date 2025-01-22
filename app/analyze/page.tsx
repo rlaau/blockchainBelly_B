@@ -2,6 +2,7 @@
 import BarChart from "@/components/custom/barChart";
 import { useEffect, useState, useCallback } from "react";
 import { ANav } from "./aNav";
+import Image from 'next/image';
 import { formatKind } from "@/components/custom/barChart";
 function convertor(
     kind: string,
@@ -30,10 +31,25 @@ const Page = () => {
     const [error, setError] = useState<string | null>(null);
     const [sortType, setSortType] = useState("genCount"); // 정렬 상태
     const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+    const [mostCoin, setMostCoin] = useState<Coin| null>(null); 
       // API에서 데이터 가져오기
   // API에서 데이터 가져오기
   // (1) 코인 목록 가져오기 (페이지네이션)
   // 의존성에서 isLoading을 제거하여, isLoading 변경 시 함수가 재생성되지 않도록 함
+      // 가장 인기 있는 코인 가져오기
+      useEffect(() => {
+        const fetchMostCoin = async () => {
+            try {
+                const res = await fetch(`/api/coins?sort=popularity&page=1&limit=0`, { cache: "no-store" });
+                const data = await res.json();
+                setMostCoin(data[0]); // 가장 인기 있는 코인 설정
+            } catch (err) {
+                console.error("Failed to fetch the most popular coin:", err);
+            }
+        };
+
+        fetchMostCoin();
+    }, [sortType]);
   const fetchDict = useCallback(
     async () => {
       // 이미 로딩 중이면 중복 요청 방지
@@ -61,7 +77,15 @@ const Page = () => {
     },
     [sortType]
   );
-
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}/${month}/${day} - ${hours}h${minutes}m`;
+  };
   // (2) 정렬 기준 or waiting 상태 바뀔 때, 페이지 초기화 후 첫 페이지 로드
   useEffect(() => {
     fetchDict();
@@ -93,9 +117,52 @@ const Page = () => {
 return (
     <div className="w-full sm:p-12">
         <ANav onSortChange={setSortType} currentSort={sortType}/>
-        <div className="flex flex-col gap-y-16 w-full pt-24 sm:pt-20">
+        <div className="flex flex-col gap-y-16 w-full pt-16 sm:pt-20">
+          <div className="flex flex-col">
+          <p className="text-2xl font-bold pb-4 pt-8">Most Popular Coin in 7 Days </p> 
+          <div>  {mostCoin ?     
+            
+<div className="grid grid-cols-7 gap-1 pt-2">
+                    <div className="relative aspect-[1/1] col-span-2 rounded-lg overflow-hidden">
+                        <Image
+                            src={mostCoin.imgUrl ? mostCoin.imgUrl : "kk"}
+                            fill
+                            alt={mostCoin.title}
+                            className="object-cotain object-top"
+                        />
+                    </div>
+<div className="col-span-5 flex flex-col gap-y-4 ml-6">
+  <h1 className="text-3xl font-bold">{mostCoin.coinName}</h1>
+  <div className="flex gap-x-1 text-lg font-bold items-center">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 15 15"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      >
+                      <path
+                        d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z"
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        clipRule="evenodd"
+                        ></path>
+                    </svg>
+                    viewCount {mostCoin.viewCount}
+                  </div>
+  <h2 className="text-lg text-gray-200">{mostCoin.description}</h2>
+                        <h3 className="text-gray-500">{formatDate(String(mostCoin.createdAt))}</h3>
+  <div className="flex flex-col text-pink-600 text-lg">
+  <h4 >{mostCoin.tokenAddress? mostCoin.tokenAddress: "No token address"}</h4>
+  <h4 >{mostCoin.poolAddress? mostCoin.poolAddress: "No pool address"}</h4>
+  </div>
+</div>
+
+</div>
+     : "Loading..."} </div>
+          </div>
     <div className="flex flex-col">
-        <p className="text-2xl font-bold pb-4 pt-8">Top Trends </p> 
+        <p className="text-2xl font-bold pb-4 pt-8">7-Day Trends </p> 
         
         <div className="flex justify-center gap-6 bg-gray-900 py-6 rounded-md shadow-md w-full flex-wrap">
   {Object.entries(data).map(([field, values]) => {

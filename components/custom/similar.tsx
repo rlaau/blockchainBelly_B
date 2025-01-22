@@ -18,7 +18,7 @@ export function SimiliarXXX({ coin, targetField, num }: { coin: Coin, targetFiel
       <ul className="pt-2 flex flex-col gap-y-1 text-balance">
         {sameXXX?.map((c, idx) => (
               <Link
-              href={`/getCoins/${c._id}`}
+              href={`/getCoins/${c._id}/0.0`}
               key={c._id?.toString()}
               className="group flex items-center gap-x-1 transition ease-in-out duration-200"
             >

@@ -36,7 +36,7 @@ export function CoinExternal({ coin }: { coin: Coin }) {
 
     return (
         <Card className="hover:brightness-150 transition ease-in-out duration-200">
-            <Link href={`/getCoins/${coin._id}`}>
+            <Link href={`/getCoins/${coin._id}/${encodeURIComponent(price)}`}>
                 <div className="relative aspect-[3/2] sm:aspect-[1/1] w-full overflow-hidden sm:rounded-lg">
                     <div className="relative aspect-[1/1]">
                         <Image
