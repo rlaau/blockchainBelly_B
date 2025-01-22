@@ -13,9 +13,7 @@ envVariables.forEach((line) => {
     }
 });
 
-const privateKey = process.env.PRIVATE_KEY;
-const infuraProjectId = process.env.INFURA_PROJECT_ID;
-
+const { ethers } = require("ethers"); // ethers를 명시적으로 가져오기
 module.exports = {
     solidity: {
         compilers: [
@@ -32,8 +30,8 @@ module.exports = {
             url: "http://127.0.0.1:8545",
         },
         sepolia: {
-            url: `https://sepolia.infura.io/v3/${infuraProjectId}`,
-            accounts: [`0x${privateKey}`],
-        },
-    },
-};
+            url: process.env.ALCHEMY_SEPOLIA_URL,      // Alchemy URL
+            accounts: [process.env.PRIVATE_KEY],         // 개발 지갑 프라이빗 키
+        }
+    }
+}

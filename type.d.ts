@@ -13,6 +13,8 @@ declare global{
   
       interface Coin {
         _id?: ObjectId;
+        tokenAddress?:string,
+        poolAddress?:string,
         price?:number;
         keyWord: string;
         viewCount:number;
@@ -25,6 +27,7 @@ declare global{
         eventClassification: "Breaking News" | "Announcement" | "Accident" | "Scandal" | "Natural Disaster" | "Political Development" | "Economic Update" | "Sports Update" | "Cultural Event" | "Technological Advance" | "Health Alert" | "Educational News" | "Environmental Update" | "International Relations" | "Human Interest Story" | "Opinion Piece" | "Editorial" | "Analysis" | "Prediction" | "Celebration" | "Award" | "Conference" | "Research Finding" | "Crime" | "Trial/Court Case" | "Entertainment Update" | "Product Launch" | "Scientific Discovery" | "Travel Advisory" | "Weather Report" | "Policy Change" | "Protest" | "Elections" | "Obituary" | "Reunion" | "Award Nomination" | "Fraud" | "Cybersecurity Incident" | "Space Exploration" | "Charity Event";
         imgUrl?: string;
         createdAt: Date;
+
         
       }
       

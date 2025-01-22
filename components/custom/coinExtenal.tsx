@@ -2,7 +2,10 @@ import { Card } from '../ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 
+
 export function CoinExternal({coin}:{coin:Coin;} ){
+
+
     return(
         <Card className='hover:brightness-150  transition ease-in-out duration-200 '>
             <Link href={ `/getCoins/${coin._id}`}>
