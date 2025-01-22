@@ -8,8 +8,11 @@ contract LiquidityPool {
     uint256 public totalLiquidity;
     mapping(address => uint256) public liquidity;
 
+    // 디버깅용 이벤트 추가
+    event DebugPrice(uint256 ethBalance, uint256 tokenBalance, uint256 price);
+
     constructor(address _tokenAddress) {
-        token = IERC20(_tokenAddress); // 토큰 컨트랙트 주소 저장
+        token = IERC20(_tokenAddress);
     }
 
     function addLiquidity(uint256 tokenAmount) public payable {
@@ -36,6 +39,15 @@ contract LiquidityPool {
     }
 
     function getPrice() public view returns (uint256) {
-        return (token.balanceOf(address(this)) * 1e18) / address(this).balance;
+        uint256 ethBalance = address(this).balance;
+        uint256 tokenBalance = token.balanceOf(address(this));
+
+        if (ethBalance == 0 || tokenBalance == 0) {
+            return 0; // 유효하지 않은 상태
+        }
+
+        uint256 price = (tokenBalance * 1e18) / ethBalance;
+
+        return price;
     }
 }

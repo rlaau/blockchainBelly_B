@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { connectDB } from "@/database"; // MongoDB 연결 함수
+import type { DeployTokenBody } from "./deploy";
+import { deployToken } from "./deploy";
 import Parser from "rss-parser";
 // GET 라우트
 export async function GET() {
@@ -10,12 +12,23 @@ export async function GET() {
       if (!coinText) {
         return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });
       }
-  
+      const name = coinText.coinName.split(" ")[0]; 
+      const symbol = name.charAt(0).toUpperCase(); 
+      const tokenBody:DeployTokenBody={
+        name,
+        symbol,
+        initialSupply:1000000,
+      }
+      const genToken = await deployToken(tokenBody)
+      coinText.tokenAddress=genToken.tokenAddress
+      coinText.poolAddress=genToken.poolAddress
+ 
+      
       const insertedCoinImage = await insertCoinImageUrl(coinText);
       if (!insertedCoinImage) {
         return NextResponse.json({ error: "Failed to generate image or save data" }, { status: 500 });
       }
-  
+      
       return NextResponse.json(insertedCoinImage);
     } catch (err) {
       console.error("Error in GET /api/createAiCoin:", err);

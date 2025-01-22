@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { Suspense } from "react";
 import  Image  from 'next/image';
 import { SimiliarXXX } from '@/components/custom/similar';
+
 import { FaTag, FaGlobe, FaUser, FaMapMarkerAlt, FaBookmark, FaClock  } from "react-icons/fa";
 export default async function Page({ params}: { params: { id: string }; }){
     const waitedParams = await Promise.resolve(params); 
@@ -39,7 +40,7 @@ export default async function Page({ params}: { params: { id: string }; }){
               </div>
               <div className=" flex justify-start pb-0">
                 <p className='text-xl font-bold text-pink-600 pr-5'>
-                  currently {coin.price||"??"}$
+                  currently {price}$
                 </p>
                   <div className="flex gap-x-1 items-center">
                     <svg
