@@ -26,10 +26,12 @@ module.exports = {
         ],
     },
     networks: {
+
         localhost: {
             url: "http://127.0.0.1:8545",
             gas: 6000000000000000, // 기본 가스 한도 증가
             gasPrice: 0, // 로컬에서는 가스비 없음
+
         },
         sepolia: {
             url: process.env.ALCHEMY_SEPOLIA_URL,      // Alchemy URL

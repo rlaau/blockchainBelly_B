@@ -2,20 +2,27 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/database';
 import { ObjectId } from 'mongodb';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-    const { id } = params;
+
+export async function GET(request: Request, context: { params: { id: string } }) {
+    const { params } = context; // context에서 params를 비동기적으로 가져옴
+    const id = params.id; // await가 필요하지 않음, 바로 사용 가능
 
     if (!id) {
         return NextResponse.json({ error: 'Coin ID is required' }, { status: 400 });
     }
 
-    const db = (await connectDB).db('postings');
-    const comments = await db
-        .collection('comments')
-        .find({ coinId: new ObjectId(id) })
-        .toArray();
+    try {
+        const db = (await connectDB).db('postings');
+        const comments = await db
+            .collection('comments')
+            .find({ coinId: new ObjectId(id) })
+            .toArray();
 
-    return NextResponse.json(comments);
+        return NextResponse.json(comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        return NextResponse.json({ error: 'Failed to fetch comments' }, { status: 500 });
+    }
 }
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {

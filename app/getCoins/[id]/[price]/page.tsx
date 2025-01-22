@@ -49,7 +49,8 @@ export default async function Page({ params }: { params: { id: string; price: st
               </div>
               <div className=" flex justify-start pb-0">
                 <p className='text-xl font-bold text-pink-600 pr-5'>
-                  currently {price}$
+                 
+                  {price=="No pool address"?"No pool address":`Currently ${price} Eth`}
                 </p>
                   <div className="flex gap-x-1 items-center">
                     <svg
