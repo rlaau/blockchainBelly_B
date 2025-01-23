@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ANav } from "./aNav";
 import Image from 'next/image';
 import { formatKind } from "@/components/custom/barChart";
+import Link from "next/link";
 function convertor(
     kind: string,
     kvList: [string, [number, number]][],
@@ -122,7 +123,7 @@ return (
           <p className="text-2xl font-bold pb-4 pt-8">Most Popular Coin in 7 Days </p> 
           <div>  {mostCoin ?     
             
-<div className="grid grid-cols-7 gap-1 pt-2">
+<Link href={`/getCoins/${mostCoin._id}/0.0`} className="grid grid-cols-7 gap-1 pt-2">
                     <div className="relative aspect-[1/1] col-span-2 rounded-lg overflow-hidden">
                         <Image
                             src={mostCoin.imgUrl ? mostCoin.imgUrl : "kk"}
@@ -158,7 +159,7 @@ return (
   </div>
 </div>
 
-</div>
+</Link>
      : "Loading..."} </div>
           </div>
     <div className="flex flex-col">

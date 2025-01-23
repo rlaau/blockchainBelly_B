@@ -130,7 +130,7 @@ async function getCoinNewsText(): Promise<Coin | null> {
                   },
                   keyWord: {
                     type: "string",
-                    description: "extract the key word. The subject of the news, the institution, or the object of the event, the subject, or the subject. ",
+                    description: "extract a single-word keyWord. The subject of the news, the institution, or the object of the event, but always as one word.",
                   },
                   description: {
                     type: "string",
@@ -275,27 +275,27 @@ const s3Client = new S3Client({
   
 async function insertCoinImageUrl(cn:Coin):Promise<Coin|null>{
 try {
-  // if (process.env.NODE_ENV === "development") {
-  //   console.log("Mocking OpenAI API response.");
-  //   const imgUrl= "https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=2166&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  //   const client = await connectDB;
-  //   const db = client.db("postings");
+   if (process.env.NODE_ENV === "development") {
+     console.log("Mocking OpenAI API response.");
+     const imgUrl= "https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=2166&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+     const client = await connectDB;
+     const db = client.db("postings");
 
-  //   const newCoin: Coin = {
-  //     ...cn,
-  //     imgUrl, // 이미지 URL 추가
-  //     createdAt: new Date(),
-  //   };
+     const newCoin: Coin = {
+       ...cn,
+       imgUrl, // 이미지 URL 추가
+       createdAt: new Date(),
+     };
 
-  //   const result = await db.collection<Coin>("coins").insertOne(newCoin);
-  // // 2) _id 필드 추가하여 CoinNews 타입 데이터 생성
-  // const savedNews: Coin = {
-  //   ...newCoin,
-  //   _id: result.insertedId, // MongoDB에서 생성된 _id 추가
-  // };
-  //   // 9) 최종 응답
-  //   return savedNews
-  // }
+     const result = await db.collection<Coin>("coins").insertOne(newCoin);
+   // 2) _id 필드 추가하여 CoinNews 타입 데이터 생성
+   const savedNews: Coin = {
+     ...newCoin,
+     _id: result.insertedId, // MongoDB에서 생성된 _id 추가
+   };
+     // 9) 최종 응답
+   return savedNews
+   }
 
 
     const { coinName, title } = cn;

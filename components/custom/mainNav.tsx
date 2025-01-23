@@ -2,11 +2,22 @@
 
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import ConnectWalletButton from './ConnectBtn';
 
 function MainNav() {
   const pathname = usePathname(); // 현재 URL 경로를 가져옴
+  const router = useRouter(); // 페이지 이동을 위한 useRouter
+  const [searchValue, setSearchValue] = useState(''); // 입력값 관리
+
   const isAnalyzePage = pathname.includes('analyze'); // 'analyze' 포함 여부 판단
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      router.push(`/coinByKW/${encodeURIComponent(searchValue.trim())}`);
+    }
+  };
 
   return (
     <nav className="w-full flex pt-4 pb-3 justify-between bg-background">
@@ -37,9 +48,13 @@ function MainNav() {
         </div>
       </div>
       <div className="flex basis-1/2 justify-end md:gap-x-8 gap-x-3 items-center">
+      <div>
         <Input
-          placeholder="Search"
+          placeholder="Enter Keyword"
           className="max-w-48 min-w-32 hidden sm:block"
+          value={searchValue} // 입력값 바인딩
+          onChange={(e) => setSearchValue(e.target.value)} // 입력값 업데이트
+          onKeyDown={handleKeyDown} // Enter 키 이벤트
         />
         <svg
           width="21"
@@ -56,6 +71,8 @@ function MainNav() {
             clipRule="evenodd"
           ></path>
         </svg>
+        </div>
+        <ConnectWalletButton/>
       </div>
     </nav>
   );

@@ -1,14 +1,11 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState, useCallback } from "react";
 import { CoinExternal } from "@/components/custom/coinExtenal";
 import { SubNav } from "@/components/custom/subNav";
+import { Timer } from "@/components/custom/timer";
+import TrendingKeyWords from "@/components/custom/TrendingKeyWords";
 
-// Timer 컴포넌트 동적 import (SSR 비활성화)
-const Timer = dynamic(() => import("@/components/custom/timer").then((mod) => mod.Timer), {
-  ssr: false,
-});
 
 export default function GetCoinsPage() {
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -110,7 +107,8 @@ export default function GetCoinsPage() {
         <Timer onWaitingStatusChange={handleWaitingStatusChange} />
       </div>
 
-      <h1 className="text-3xl py-4 font-bold mb-4">Generated Coins
+<TrendingKeyWords/>
+      <h1 className="text-3xl pt-12 pb-4 font-bold mb-4">Generated Coins
 </h1>
 
       {/* 코인 목록 */}
