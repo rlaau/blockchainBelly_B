@@ -116,7 +116,7 @@ const Page = () => {
   };
   
 return (
-    <div className="w-full sm:p-12">
+    <div className="w-full sm:p-12 pt-8 ">
         <ANav onSortChange={setSortType} currentSort={sortType}/>
         <div className="flex flex-col gap-y-16 w-full pt-16 sm:pt-20">
           <div className="flex flex-col">

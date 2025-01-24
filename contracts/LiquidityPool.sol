@@ -39,15 +39,9 @@ contract LiquidityPool {
     }
 
     function getPrice() public view returns (uint256) {
-        uint256 ethBalance = address(this).balance;
         uint256 tokenBalance = token.balanceOf(address(this));
-
-        if (ethBalance == 0 || tokenBalance == 0) {
-            return 0; // 유효하지 않은 상태
-        }
-
-        uint256 price = (tokenBalance * 1e18) / ethBalance;
-
-        return price;
+        uint256 ethBalance = address(this).balance;
+        require(ethBalance > 0, "No ETH in the pool");
+        return (tokenBalance * 1e18) / ethBalance;
     }
 }

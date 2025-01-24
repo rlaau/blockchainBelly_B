@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { CreateCoin } from '../createAiCoin/route';
+
 
 // 0.01시간 = 360초 (테스트용)
-const TIMER_INTERVAL_HOURS = 6;
+const TIMER_INTERVAL_HOURS = 1;
 const TIMER_INTERVAL_MS = TIMER_INTERVAL_HOURS * 60 * 60 * 1000;
 
 // 남은 시간 계산용
@@ -18,20 +18,35 @@ function resetTimer() {
 async function performTask() {
   console.log('[performTask] Starting DB job...');
 
-  let isOk = await CreateCoin();
-  let count = 0;
-  while (count <= 3) {
-    if (!isOk) {
-      isOk = await CreateCoin();
-      count++;
-      continue;
-    } else {
-      break;
+  const apiEndpoint = `${process.env.BASE_URL}/api/createAiCoin`; // API 엔드포인트
+  console.log(`[performTask] API Endpoint: ${apiEndpoint}`);
+
+
+  
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: 'GET', // GET 요청
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('[performTask] API call successful:', responseData);
+ 
+      } else {
+        console.error(`[performTask] API call failed with status ${response.status}`);
+      }
+    } catch (error) {
+      console.error('[performTask] Error during API call:', error.message);
+    } finally {
+      console.log("[performTask] if-else complete")
     }
+
+  
   }
 
-  console.log('[performTask] Completed.');
-}
 
 /**
  * (3) 정확한 36초 주기 실행 보장 로직
@@ -40,6 +55,8 @@ async function performTask() {
  */
 async function scheduleTask() {
   const startTime = Date.now();
+  console.log(`[scheduleTask] Checking task at: ${new Date(startTime).toISOString()}`);
+  console.log(`[scheduleTask] countdownEndTime: ${countdownEndTime}, startTime: ${startTime}`);
 
   try {
     // 타이머가 만료되었을 경우 작업 수행
@@ -47,6 +64,8 @@ async function scheduleTask() {
       console.log(`[scheduleTask] Performing task at: ${new Date(startTime).toISOString()}`);
       await performTask();
       resetTimer(); // 타이머 재설정
+    } else {
+      console.log("Skipped Scheduled Task");
     }
   } catch (err) {
     console.error('[scheduleTask] Task failed:', err);

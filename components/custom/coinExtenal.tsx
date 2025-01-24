@@ -12,7 +12,11 @@ export function CoinExternal({ coin }: { coin: Coin }) {
     useEffect(() => {
         const fetchPrice = async () => {
             try {
-                if (coin.poolAddress) {
+                if (coin.price){
+                    setPrice(String(coin.price))
+
+                }
+                else if (coin.poolAddress) {
                     const fetchedPrice = await getPrice(coin.poolAddress);
 
                     if (fetchedPrice == "0.0") {

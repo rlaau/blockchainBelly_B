@@ -8,14 +8,24 @@ export interface DeployTokenBody {
     initialSupply: number;
     tokenReservation?:number;
     ethReservation?:number;
+
 }
 
 export interface GenToken {
     tokenAddress: string;
     poolAddress: string;
+    tokenPrice?:number;
 }
+// 작업 잠금 플래그
+let isDeploying = false;
+
 
 export async function deployToken(tokenBody: DeployTokenBody): Promise<GenToken> {
+    if (isDeploying) {
+        throw new Error("Another deployment is already in progress. Please wait.");
+    }
+    isDeploying=true
+
     // 입력값 검증
     if (!tokenBody.name || !tokenBody.symbol || !tokenBody.initialSupply || tokenBody.initialSupply <= 0) {
         return { tokenAddress: "", poolAddress: "" };
@@ -59,7 +69,7 @@ export async function deployToken(tokenBody: DeployTokenBody): Promise<GenToken>
     const deployScript = path.resolve(process.cwd(), "scripts", "deploy.js");
     const args = ["run", deployScript, "--network", "localhost"];
 
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         const child = spawn("npx", ["hardhat", ...args], { shell: true });
 
         let output = "";
@@ -84,6 +94,7 @@ export async function deployToken(tokenBody: DeployTokenBody): Promise<GenToken>
                     resolve({
                         tokenAddress: parsedOutput.tokenAddress || "",
                         poolAddress: parsedOutput.poolAddress || "",
+                        tokenPrice: parsedOutput.tokenPrice||0,
                     });
                 } catch (parseError) {
                     console.error("JSON parse error:", parseError);
@@ -95,4 +106,5 @@ export async function deployToken(tokenBody: DeployTokenBody): Promise<GenToken>
             }
         });
     });
+    
 }

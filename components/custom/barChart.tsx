@@ -64,7 +64,7 @@ const BarChart: React.FC<BarChartProps> = ({kind, data, maxValue }) => {
     <Link
       key={index}
       href={`/coinByKW/${encodeURIComponent(item.label)}`} // URL 인코딩된 label로 이동
-      className="w-full h-full no-underline hover:underline"
+      className="w-4 sm:w-6 md:w-10 lg:w-12 xl:w-full no-underline hover:underline"
     >
       {barContent}
     </Link>

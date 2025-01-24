@@ -105,16 +105,37 @@ const txAddLiquidity = await pool.connect(deployer).addLiquidity(tokenReservatio
     } else {
        // console.log("No liquidity to add. Skipping liquidity addition.");
     }
-    console.log(JSON.stringify({
-        tokenAddress,
-        poolAddress,
-        tokenName: name,
-    }));
+    // console.log(JSON.stringify({
+    //     tokenAddress,
+    //     poolAddress,
+    //     tokenName: name,
+    // }));
+    
+  
+
+    // 디버깅: Pool 상태 확인
+const tokenBalance = await token.balanceOf(poolAddress);
+const ethBalance = await ethers.provider.getBalance(poolAddress);
+const rawPrice = (ethBalance * 10n ** 18n) / tokenBalance; // BigInt 정규화
+const tokenPrice = (Number(rawPrice) / 10 ** 18).toFixed(6); // 소수점 6자리까지 표시
+
+    // 최종 JSON 출력
+    const result = {
+      tokenAddress,
+      poolAddress,
+      tokenName: await token.name(),
+      tokenSymbol: await token.symbol(),
+      tokenPrice, // LiquidityPool의 가격 추가
+    };
+    console.log(JSON.stringify(result, null, 2));
+
+    return result;
 
     return {
         tokenAddress,
         poolAddress,
         tokenName: await token.name(),
+     
     };
 }
 

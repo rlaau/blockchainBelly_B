@@ -98,7 +98,7 @@ export default function GetCoinsPage() {
   }, [handleScroll]);
 
   return (
-    <main className="w-full sm:p-12 mx-auto">
+    <main className="w-full sm:p-12 mx-auto pt-8 ">
       {/* SubNav: 정렬 옵션 변경 */}
       <SubNav onSortChange={setSortType} currentSort={sortType} />
 

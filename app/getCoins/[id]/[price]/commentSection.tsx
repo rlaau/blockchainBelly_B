@@ -20,7 +20,7 @@ export default function CommentSection({ coinId }: { coinId: string }) {
     if (storedAddress) {
       setWalletAddress(storedAddress);
     } else {
-        setWalletAddress("no wallet");
+      setWalletAddress(null); // 지갑 주소가 없으면 null로 설정
     }
 
     // 댓글 로드
@@ -79,11 +79,21 @@ export default function CommentSection({ coinId }: { coinId: string }) {
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write a comment..."
           className="rounded-lg p-2 w-full bg-transparent border-2 border-gray-300"
+          disabled={!walletAddress} // 지갑 없으면 입력 비활성화
         />
         <button
-          onClick={handleAddComment}
-          disabled={loading}
-          className="bg-gray-800 hover:bg-pink-600 w-20 text-white rounded px-2 py-1 mt-2 ml-auto"
+          onClick={() => {
+            if (!walletAddress) {
+              alert("Please connect your wallet to leave a comment.");
+              return;
+            }
+            handleAddComment();
+          }}
+          className={`w-20 text-white rounded px-2 py-1 mt-2 ml-auto ${
+            walletAddress
+              ? "bg-gray-800 hover:bg-pink-600"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
         >
           {loading ? "Adding..." : "Add"}
         </button>

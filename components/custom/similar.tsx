@@ -25,7 +25,7 @@ export function SimiliarXXX({ coin, targetField, num }: { coin: Coin, targetFiel
               <span className="group-hover:hidden ">{idx + 1}.</span>
               <span className="hidden group-hover:inline text-pink-600 transition-opacity ease-in-out duration-200">{"->"}</span>
               <span>{c.coinName}</span>
-              <span className="ml-1">{c.price ? `${c.price}$` : "nn$"}</span>
+              <span className="ml-1">{c.price ? `${c.price}$` : "0.0 ETH"}</span>
             </Link>
         ))}
       </ul>

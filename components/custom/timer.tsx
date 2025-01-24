@@ -37,6 +37,21 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
     remainingTime: "00:00:00",
     totalTime: "00:00:00",
   });
+
+  const [dynamicMessage, setDynamicMessage] = useState("Creating New Coin...");
+
+  const dynamicMessages = [
+    "Processing reservations...",
+    "Selecting Google News...",
+    "Analyzing news...",
+    "Generating image...",
+    "Wait for token...",
+    "Deploying token...",
+    "Adding reservations to liquidity pool...",
+  ];
+
+
+
   const [isWaiting, setIsWaiting] = useState(false);
   const [coins, setCoins] = useState<Coin[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -136,11 +151,11 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
     e.preventDefault();
     const coinId = coins[0]?._id;
     if (!coinId) {
-      alert("코인 정보가 없습니다.");
+      alert("Coin information not found");
       return;
     }
     if (!walletAddress) {
-      alert("지갑 주소가 없습니다. 메타마스크 연결을 확인하세요.");
+      alert ("Wallet address missing. Check metamask connection");
       return;
     }
 
@@ -167,7 +182,7 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
       setEthAmount("");
       fetchReservations();
 
-      alert("예약이 완료되었습니다. \nID: " + data.reservationId);
+      alert("Your reservation is complete. \nID: "  + data.reservationId);
     } catch (error) {
       console.error("Error creating reservation:", error);
       alert("Error while creating reservation");
@@ -215,6 +230,39 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
     setPriceHistory(newHistory);
   }, [reservations]);
 
+
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+  
+    if (isWaiting) {
+      let index = 0;
+  
+      const updateMessage = () => {
+        if (index < dynamicMessages.length) {
+          setDynamicMessage(dynamicMessages[index]);
+          index++;
+  
+          // 다음 간격 설정: 6500ms를 메시지 개수로 나눈 값을 기준으로 약간의 랜덤 차이 추가
+          const baseInterval = 6500 / dynamicMessages.length;
+          const randomFactor = (Math.random() - 0.5) * baseInterval * 0.4; // ±20% 변동
+          const nextInterval = Math.max(200, baseInterval + randomFactor); // 최소 간격 200ms 보장
+  
+          // 재귀적으로 setTimeout 호출
+          timeoutId = setTimeout(updateMessage, nextInterval);
+        }
+      };
+  
+      updateMessage(); // 메시지 업데이트 시작
+    } else {
+      setDynamicMessage("Creating New Coin...");
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId); // 컴포넌트 언마운트 시 타이머 정리
+    };
+  }, [isWaiting]);
   // --- 10) 현재 "최종" 가격 (마지막 예약 기준)
   const lastPoint = priceHistory[priceHistory.length - 1];
   const currentPrice = lastPoint ? lastPoint.price : NaN;
@@ -241,7 +289,7 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
             }`}
           >
             {isWaiting ? (
-              <span>Creating New Coin...</span>
+              <span>{dynamicMessage}</span>
             ) : (
               <span>
                 Next coin in<br />
@@ -267,9 +315,9 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
               {isWaiting ? (
                 <span>Pending Reservation...</span>
               ) : isTimeCritical() ? (
-                <p className="text-pink-600 font-bold animate-pulse">
-                  Reservation closes in{" "}
-                  <span className="text-red-500">{timer.remainingTime}</span>
+                <p className="text-red-500 font-bold">
+                  Reservation closes Soon
+
                 </p>
               ) : (
                 <p>Reserve Now</p>
@@ -282,21 +330,21 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
       {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 w-full flex items-center justify-center z-50">
-          {/* 배경 어둡게 */}
+          {/* Dark Background */}
           <div
             className="absolute inset-0 bg-black opacity-75"
             onClick={() => setIsModalOpen(false)}
           ></div>
 
-          {/* 모달 내용 */}
+          {/* Modal Content */}
           <ScrollArea
             className="
-              relative backdrop-blur-3xl border border-pink-600 rounded-lg shadow-lg p-8 
+              relative backdrop-blur-xl brightness-150 border border-pink-600 rounded-lg shadow-lg p-8 
               max-w-2xl w-full text-center
               h-[80vh] overflow-y-auto
             "
           >
-            {/* 닫기 버튼 */}
+            {/* Close Button */}
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
@@ -304,38 +352,47 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
               ✕
             </button>
 
-            {/* 모달 타이틀 */}
+            {/* Modal Title */}
             <h2 className="text-2xl font-bold mb-4 text-white">
-              예약 구매 (Reservation)
+            <span className="text-pink-700">Reserve</span> now while waiting for the next coin.<br/>
+            <span className="text-pink-700">Guess</span> what meme coin will come next!
+            <p className="text-base font-medium text-gray-300">The next meme coin is based on one of the top 5{" "}               
+              <a
+                className="text-blue-600 "
+                href="https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Google RSS</a>{" "}news stories.</p>
             </h2>
+            <h3>Reservation Price Chart</h3>
 
-            {/* 가격 차트 */}
+            {/* Price Chart */}
             <PriceChart data={priceHistory} />
 
-            {/* ---- 현재 가격 표시 ---- */}
+            {/* ---- Current Price Display ---- */}
             <div className="mb-4">
               <p className="text-gray-200 font-semibold">
-                현재 가격:{" "}
+                Current Price:{" "}
                 <span className="text-pink-600 text-xl">
                   {isNaN(currentPrice) ? "N/A" : currentPrice}
                 </span>
               </p>
               <p className="text-gray-400 text-sm">
-                (총 ETH: {totalEth} / 총 토큰: {totalToken})
+                (Total ETH: {totalEth} / Total Tokens: {totalToken})
               </p>
             </div>
 
-            {/* 예약 구매 설명 */}
+            {/* Reservation Purchase Description */}
             <p className="text-gray-400 mb-4">
-              토큰, 지불 ETH를 입력하고 예약 구매를 진행해보세요.
+              Enter the token amount and ETH to proceed with the reservation.
               <br />
-              현재 지갑:{" "}
+              Current Wallet:{" "}
               <span className="font-semibold text-white">
                 {walletAddress || "N/A"}
               </span>
             </p>
 
-            {/* --- 예약 구매 폼 --- */}
+            {/* --- Reservation Form --- */}
             <form onSubmit={handleReservationSubmit} className="space-y-4 mb-8">
               <div className="px-2">
                 <label
@@ -350,8 +407,9 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
                   value={tokenAmount}
                   onChange={(e) => setTokenAmount(e.target.value)}
                   className="w-full border bg-transparent rounded p-2 text-white"
-                  placeholder="예: 1000"
+                  placeholder="e.g., 1000"
                   required
+  min="0"
                 />
               </div>
               <div className="px-2">
@@ -367,62 +425,59 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
                   value={ethAmount}
                   onChange={(e) => setEthAmount(e.target.value)}
                   className="w-full border bg-transparent rounded p-2 text-white"
-                  placeholder="예: 0.05"
+                  placeholder="e.g., 0.05"
                   required
+                   min="0"
                 />
               </div>
               <button
                 type="submit"
                 className="bg-transparent border-pink-600 border text-white font-bold py-2 px-4 rounded hover:bg-pink-700 transition"
               >
-                예약하기
+                Reserve Now
               </button>
             </form>
 
-            {/* --- 예약 주문 목록 (댓글창) --- */}
+            {/* --- Reservation List --- */}
             <div className="text-left mb-8">
               <h3 className="text-xl font-semibold text-gray-300 mb-2 border-b border-gray-700 pb-2">
-                예약 주문 내역
+                Reservation History
               </h3>
               {reservations.length === 0 ? (
-                <p className="text-gray-500">아직 예약 주문이 없습니다.</p>
+                <p className="text-gray-500">No reservations yet.</p>
               ) : (
                 reservations.map((r) => (
                   <div
                     key={r._id}
                     className="border-b border-gray-600 py-2 px-1 mb-2"
                   >
-                    <p className="font-bold text-gray-200">
-                      {r.walletAddress}
-                    </p>
+                    <p className="font-bold text-gray-200">{r.walletAddress}</p>
                     <p className="text-sm text-gray-400">
                       Token: {r.tokenAmount} | ETH: {r.ethAmount}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {new Date(r.createdAt).toLocaleString()}
+                      {new Date(r.createdAt).toLocaleString("EN-us")}
                     </p>
                   </div>
                 ))
               )}
             </div>
 
-            {/* --- 가격 시계열 (priceHistory) --- */}
+            {/* --- Price History --- */}
             <div className="text-left">
               <h3 className="text-xl font-semibold text-gray-300 mb-2 border-b border-gray-700 pb-2">
-                가격 변동 히스토리
+                Price History
               </h3>
               {priceHistory.length === 0 ? (
-                <p className="text-gray-500">아직 가격 이력이 없습니다.</p>
+                <p className="text-gray-500">No price history available.</p>
               ) : (
                 <div className="space-y-2">
                   {priceHistory.map((p, idx) => (
                     <div key={idx} className="text-sm text-gray-400">
                       <span className="font-semibold">
-                        {new Date(p.time).toLocaleTimeString()}:
+                        {new Date(p.time).toLocaleTimeString("EN-us")}:
                       </span>{" "}
-                      <span className="text-pink-600 font-bold">
-                        {p.price}
-                      </span>
+                      <span className="text-pink-600 font-bold">{p.price}</span>
                     </div>
                   ))}
                 </div>
@@ -432,6 +487,7 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
         </div>
       )}
 
+
       {/* 사이트 설명 모달 */}
       {isInfoModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -439,7 +495,7 @@ export function Timer({ onWaitingStatusChange }: TimerProps) {
             className="absolute inset-0 bg-black opacity-75"
             onClick={() => setIsInfoModalOpen(false)} // 배경 클릭 시 닫기
           ></div>
-          <div className="relative backdrop-blur-3xl border-pink-600 border rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="relative backdrop-blur-3xl  brightness-150 border-pink-600 border rounded-lg shadow-lg p-8 max-w-md w-full text-center">
             <h2 className="text-2xl font-bold mb-4 text-white">
               Real-time News Analysis
             </h2>

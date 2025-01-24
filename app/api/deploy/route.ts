@@ -16,6 +16,8 @@ export async function POST(request: Request) {
             message: "Token deployment successful",
             tokenAddress: result.tokenAddress,
             poolAddress: result.poolAddress,
+            tokenPrice:result.tokenPrice,
+        
         });
     } catch (error) {
         // 에러 처리

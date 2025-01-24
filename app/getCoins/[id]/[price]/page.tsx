@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: { id: string; price: st
     const db = (await connectDB).db('postings');
     const coin = (await db.collection('coins').findOneAndUpdate(
       { _id: new ObjectId(id) },
-      { $inc: { viewCount: 1 } },
+      { $inc: { viewCount: 0.5 } }, //찾아보니 vervel 에러 특이라함. 두 번 방문되는거.
       {
         returnDocument: 'after',
       }
