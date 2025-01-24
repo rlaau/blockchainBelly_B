@@ -26,10 +26,18 @@ module.exports = {
         ],
     },
     networks: {
-
+        hardhat: {
+            chainId: 31337,
+            // EIP-1559 테스트 위해 baseFeePerGas 명시
+            initialBaseFeePerGas: "1000000000", // 1 Gwei
+            // 혹은 가스 가격을 강제
+            gasPrice: 50000000000, // 50 Gwei
+            // blockGasLimit 등도 충분히 크게
+            blockGasLimit: 20000000,
+          },
         localhost: {
             url: "http://127.0.0.1:8545",
-            gas: 6000000000000000, // 기본 가스 한도 증가
+            gas: 1000000000, // 1 Gwei
             gasPrice: 0, // 로컬에서는 가스비 없음
 
         },

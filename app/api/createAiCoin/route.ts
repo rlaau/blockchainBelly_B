@@ -8,6 +8,48 @@ import Parser from "rss-parser";
 // GET 라우트
 export async function GET() {
     try {
+      const client = await connectDB;
+      const db = client.db("postings");
+// 2. 모든 reservationPool 중 가장 최신의 풀 찾기
+const latestPool = await db
+  .collection("reservationPool")
+  .findOne(
+    {}, // 조건 없이 모든 풀 조회
+    { sort: { createTime: -1 } } // 최신순 정렬 후 하나만 반환
+  );
+
+if (!latestPool) {
+  return NextResponse.json(
+    { message: "No reservation pool found." },
+    { status: 404 }
+  );
+}
+  
+      const activePool = latestPool; // 최신 reservationPool
+  
+      // 3. 해당 reservationPool의 모든 주문 가져오기
+      const reservations = await db
+        .collection("reservation")
+        .find({ reservationPoolId: activePool._id }) // activePool과 연결된 주문만
+        .toArray();
+  
+      if (reservations.length === 0) {
+        return NextResponse.json(
+          { message: "No reservations found for this pool." },
+          { status: 404 }
+        );
+      }
+  
+      // 4. Token과 ETH 합산
+      const totalEth = reservations.reduce(
+        (acc, order) => acc + Number(order.ethAmount),
+        0
+      );
+      const totalToken = reservations.reduce(
+        (acc, order) => acc + Number(order.tokenAmount),
+        0
+      );
+
       const coinText = await getCoinNewsText();
       if (!coinText) {
         return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });
@@ -18,11 +60,18 @@ export async function GET() {
         name,
         symbol,
         initialSupply:1000000,
+        tokenReservation:totalToken,
+        ethReservation:totalEth,
+
       }
       const genToken = await deployToken(tokenBody)
       coinText.tokenAddress=genToken.tokenAddress
       coinText.poolAddress=genToken.poolAddress
+      if (!coinText.tokenAddress){
+        return NextResponse.json({ error: "Failed to deploy coin" }, { status: 500 });
+      }
  
+    
       
       const insertedCoinImage = await insertCoinImageUrl(coinText);
       if (!insertedCoinImage) {

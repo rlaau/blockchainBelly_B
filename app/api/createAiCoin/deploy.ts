@@ -6,6 +6,8 @@ export interface DeployTokenBody {
     name: string;
     symbol: string;
     initialSupply: number;
+    tokenReservation?:number;
+    ethReservation?:number;
 }
 
 export interface GenToken {
@@ -42,6 +44,8 @@ export async function deployToken(tokenBody: DeployTokenBody): Promise<GenToken>
         TOKEN_NAME: tokenBody.name,
         TOKEN_SYMBOL: tokenBody.symbol,
         INITIAL_SUPPLY: tokenBody.initialSupply.toString(),
+        TOKEN_RESERVATION: tokenBody.tokenReservation?.toString() || "0",
+        ETH_RESERVATION: tokenBody.ethReservation?.toString() || "0",
     };
 
     // .env.local 파일에 다시 쓰기 (기존 순서를 유지하려면 기존 내용을 기반으로 갱신)
